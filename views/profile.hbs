@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile</title>
+</head>
+
+<link rel="stylesheet" href="style.css">
+
+<body>
+    {{>afterHeader}}
+    <form action="/editProfile" method="GET">
+        <div class="container">
+            <h1>{{title}}</h1>
+            <br />
+            <br />
+            <br />
+            <h2>{{message}}</h2>
+            <h2>{{message1}}</h2><br />
+            <h2>{{message2}}</h2><br />
+            <h2>{{message3}}</h2><br />
+            <br />
+            <div class="button"><button type="submit" size="25" class="signupbtn">Edit</button></div>
+        </div>
+</body>
+</form>
+
+</html>

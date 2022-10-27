@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Sign Up Page</title>
+  </head>
+  <link rel="stylesheet" href="style.css">
+  <body>
+      {{>beforeHeader}}
+    <form  method="POST" action="/userSignup">
+    <h1>{{title}}</h1><br/>
+    <br/>
+    <div class="container">
+    Enter Name :<input type="text" id="uname" name="name" maxlength="30" size="25" required><br/><br/>
+    Enter Email :<input type="email" id="uemail" name="email" size="25" required><br/><br/>
+    Enter Password :<input type="password" id="upassword" name="password"minlength="6" maxlength="10" required><br/><br/>
+    Enter Phone Number :<input type="text" id="unumber" name="phone" maxlength="10" size="25" required><br/><br/>
+    <div class="button"><button type="submit" size="25" class="signupbtn">Submit</button></div>
+    <br/>
+    <br/>
+    <br/></div>
+   <center><h2>{{message}}</h2>
+</center> 
+ </form>
+  </body>
+</html>
