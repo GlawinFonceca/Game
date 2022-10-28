@@ -1,17 +1,18 @@
-const con = require('../database/Connection')
+const getConnection = require('../database/connection')
 const validate = require('validator');
 
 async function isValidUpdate(user, name, phone) {
     try {
+        const connection = await getConnection();
         //updating user name and phone nuumber
         if (user) {
             if (!name && !phone) {
                 return { status: false, message: 'Please enter name or phone number' }
             }
             else if (!phone) {
-                const userName = validate.isAlpha(Name);
+                const userName = validate.isAlpha(name);
                 if (userName === true) {
-                    await con.query(`UPDATE user SET name='${name}' WHERE email = '${user.email}'`)
+                    await connection.execute(`UPDATE user SET name='${name}' WHERE email = '${user.email}'`)
                     return { status: true, message: 'Successfully updated' }
                 }
                 else {
@@ -21,7 +22,7 @@ async function isValidUpdate(user, name, phone) {
             else if (!name) {
                 const userPhone = validate.isLength(phone, { min: 10, max: 10 }) && validate.isNumeric(phone)
                 if (userPhone === true) {
-                    await con.query(`UPDATE user SET phone='${phone}' WHERE email = '${user.email}'`)
+                    await connection.execute(`UPDATE user SET phone='${phone}' WHERE email = '${user.email}'`)
                     return { status: true, message: 'Successfully updated' }
                 }
                 else {
@@ -32,7 +33,7 @@ async function isValidUpdate(user, name, phone) {
                 const userName = validate.isAlpha(name);
                 const userPhone = validate.isLength(phone, { min: 10, max: 10 }) && validate.isNumeric(phone)
                 if (userName === true && userPhone === true) {
-                    await con.query(`UPDATE user SET name = '${name}',phone='${phone}' WHERE email = '${user.email}'`)
+                    await connection.execute(`UPDATE user SET name = '${name}',phone='${phone}' WHERE email = '${user.email}'`)
                     return { status: true, message: 'Successfully updated' }
                 }
                 else {

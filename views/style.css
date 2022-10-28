@@ -24,11 +24,22 @@ h5 {
 
 button {
     background-color: #04AA6D;
+    width: 100px;
+    color: white;
+    padding: 14px 20px;
+    margin: 10px 0;
+    border: none;
+    cursor: pointer;
+    opacity: 0.9;
+    font-weight: bold;
+}
+
+label {
+    background-color: #04AA6D;
     color: white;
     padding: 14px 20px;
     margin: 8px 0;
     border: none;
-    cursor: pointer;
     opacity: 0.9;
     font-weight: bold;
 }
@@ -37,6 +48,9 @@ button {
     float: left;
 }
 
+.botbtn {
+    float: left;
+}
 .container {
     padding: 16px;
     font-weight: bold;
@@ -51,5 +65,12 @@ input[type=email] {
     display: inline-block;
     border: none;
     background: #f1f1f1;
+
+}
+td {
+    width: 20%;
+    padding: 10px;
+    margin: 2px 0 20px 0;
+    border: black;
 
 }

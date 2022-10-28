@@ -7,13 +7,12 @@ const cookieParser = require('cookie-parser')
 require('dotenv').config({path: './config/.env'})
 
 
-require('./database/connection');
 const router = require('./routes/user')
 
 
 
-const viewPath = path.join(__dirname, '../GAME/views');
-const headerPath = path.join(__dirname, '../GAME/views/partials');
+const viewPath = path.join(__dirname, '../Game/views');
+const headerPath = path.join(__dirname, '../Game/views/partials');
 
 app.set('view engine', 'hbs')
 app.set('views', viewPath);
@@ -28,7 +27,7 @@ app.use(express.static(viewPath))
 app.use(router);
 
 
-app.listen(port, () => {
+app.listen(process.env.PORT, () => {
     console.log('server is up on port ',process.env.PORT);
 })
 

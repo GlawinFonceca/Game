@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+{{>gameHeader}}
+<body>
+    <form method="POST" action="/gamePage">
+    <h1>{{title}}</h1>
+    <br />
+    <br />
+    <table>
+        <tr>
+            <td><input type="text" size="25"></td>
+            <td><input type="text" size="25"></td>
+            <td><input type="text" size="25"></td>
+        </tr>
+        <tr>
+            <td><input type="text" size="25"></td>
+            <td><input type="text" size="25"></td>
+            <td><input type="text" size="25"></td>
+        </tr>
+        <tr>
+            <td><input type="text" size="25"></td>
+            <td><input type="text" size="25"></td>
+            <td><input type="text" size="25"></td>
+        </tr>
+    </table>
+    <br />
+    <br />
+    <div class="container">
+        <div class="button"><button type="submit" size="25" class="botbtn">Bot</button></div>
+        <center> <label>Status :</label></center>
+    </div>
+</form>
+</body>
+
+</html>

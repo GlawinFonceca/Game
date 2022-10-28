@@ -1,13 +1,13 @@
-const mysql = require('mysql');
-const con = mysql.createConnection({
-    host: 'localhost',
-    user: process.env.user,
-    password: process.env.password,
-    database: 'game'
-})
-con.connect(function (err) {
-    if (err) return new Error(err.message);
-    console.log('database created');
+const mysql = require('mysql2/promise');
 
-})
-module.exports = con
+async function getConnection() {
+    const con = await mysql.createConnection({
+        host: 'localhost',
+        user: process.env.user,
+        password: process.env.password,
+        database:'game'
+    })
+    return con
+}
+
+module.exports = getConnection;
