@@ -1,8 +1,8 @@
 const getConnection = require('../database/connection');
 
-async function cookieValidation(userToken) {
+async function cookieValid(userToken) {
     const connection = await getConnection();
-    const data = await connection.execute(`SELECT ${userToken} FROM user`);
+    const data = await connection.execute(`SELECT '${userToken}' FROM user`);
     if(data[0]){
         return true
     }
@@ -11,4 +11,4 @@ async function cookieValidation(userToken) {
     }
 }
 
-module.exports =cookieValidation();
+module.exports =cookieValid();
