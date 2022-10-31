@@ -5,7 +5,6 @@ const jwt = require('jsonwebtoken')
 const getConnection = require('../database/connection')
 const updateValidation = require('../helper/userUpdate')
 const isValidSignup = require('../helper/userSignup');
-const { parse } = require('handlebars');
 
 
 router.get('/home', async (req, res) => {
