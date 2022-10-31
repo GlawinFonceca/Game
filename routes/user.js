@@ -4,94 +4,36 @@ const jwt = require('jsonwebtoken')
 
 const getConnection = require('../database/connection')
 const updateValidation = require('../helper/userUpdate')
-const isValidSignup = require('../helper/userSignup')
+const isValidSignup = require('../helper/userSignup');
+const { parse } = require('handlebars');
 
 
-async function cookieValid(userToken) {
-    const connection = await getConnection();
-    const data = await connection.execute(`SELECT '${userToken}' FROM user`);
-    if(data[0]){
-        return true
-    }
-    else {
-        return false
-    }
-}
-
-//cookie
-const timestamp = new Date().getTime(); // current time
-const exp = timestamp + (1000 * 3600)
-
-function validateCookie(req,res,next){
-    const data = cookieValid(req.cookies['userToken']);
-    if(data== true){
-        next()
-    }
-
-
-
-}
-router.get('', (req, res) => {
+router.get('/home', async (req, res) => {
     try {
-        res.render('home', {
-            title: 'Home Page',
-            message1: 'Please signup or Login'
-        })
+        const cookie = req.cookies['userToken'];
+        const connection = await getConnection();
+        const userData = await connection.execute(`SELECT * FROM user WHERE access_token='${cookie}'`);
+        const user = JSON.parse(JSON.stringify(userData[0][0]));
+        if (user.length !== 0) {
+            res.render('views', {
+                title: 'Welcome'
+            })
+        }
+        else {
+            res.render('home', {
+                title: 'Home Page',
+                message1: 'Please signup or Login'
+            })
+        }
+
     }
     catch (e) {
-        console.log("server:", e.message);
+        console.log("home:", e.message);
         res.send({
             message: 'failed',
         })
     }
 })
-
-// router.get('/pageHome', (req, res) => {
-//     try {
-//         res.render('home', {
-//             title: 'Home Page',
-//             message1: 'Please signup or Login'
-//         })
-//     }
-//     catch (e) {
-//         console.log("server:", e.message);
-//         res.send({
-//             message: 'failed',
-//         })
-//     }
-// })
-
-    router.get('/pageHome', validateCookie,async (req, res) => {
-        try {
-            res.render('viewProfile', {
-                title: 'Welcome'
-            })
-
-        }
-        catch (e) {
-            console.log("home:", e.message);
-            res.send({
-                message: 'failed',
-            }) 
-        }
-    })
-
-
-
-    // router.get('/pageHome', validateCookie,async (req, res) => {
-    //     try {
-    //         res.render('home', {
-    //             title: 'Home Page',
-    //         })
-    //     }
-    //     catch (e) {
-    //         console.log("home:", e.message);
-    //         res.send({
-    //             message: 'failed',
-    //         })
-    //     }
-    // })
-
 
 router.get('/pageSignup', (req, res) => {
     try {
@@ -155,8 +97,9 @@ router.post('/userSignup', async (req, res) => {
         const connection = await getConnection();
         const isValid = await isValidSignup(req.body.name, req.body.email, req.body.password, req.body.phone);
         if (isValid.status === true) {
-            const data = await connection.execute(`SELECT * FROM user WHERE email='${req.body.email}'`);
-            if (data[0].length !== 0) {
+            const userData = await connection.execute(`SELECT * FROM user WHERE email='${req.body.email}'`);
+            const user = JSON.parse(JSON.stringify(userData[0][0]));
+            if (user.length !== 0) {
                 res.render('signup', {
                     message: 'email is already saved'
                 })
@@ -165,12 +108,13 @@ router.post('/userSignup', async (req, res) => {
                 const saltRounds = 10;
                 //encrypting password 
                 req.body.password = await bcrypt.hash(req.body.password, saltRounds);
-                await connection.execute(`INSERT INTO user(user_id,name,email,password,phone)VALUES(1,'${req.body.name}','${req.body.email}','${req.body.password}','${req.body.phone}')`);
+                await connection.execute(`INSERT INTO user(name,email,password,phone)VALUES('${req.body.name}','${req.body.email}','${req.body.password}','${req.body.phone}')`);
                 const userId = await connection.execute(`SELECT user_id FROM user WHERE email='${req.body.email}'`);
-                const accessToken = jwt.sign(userId[0][0].user_id, process.env.jwtToken);
+                const user = JSON.parse(JSON.stringify(userId[0][0]));
+                const accessToken = jwt.sign(user.user_id, process.env.jwtToken);
                 const updateToken = await connection.execute(`UPDATE user SET access_token='${accessToken}' WHERE email='${req.body.email}'`)
-                res.cookie('userToken', accessToken, { maxAge: exp, httpOnly: true })
-                res.render('viewProfile', {
+                res.cookie('userToken', accessToken, { maxAge: 86400000, httpOnly: true })
+                res.render('view', {
                     title: 'Welcome'
                 })
             }
@@ -193,18 +137,19 @@ router.post('/userSignup', async (req, res) => {
 router.post('/userLogin', async (req, res) => {
     try {
         const connection = await getConnection();
-        const data = await connection.execute(`SELECT * FROM user WHERE email='${req.body.email}'`)
-        if (data[0].length === 0) {
+        const userData = await connection.execute(`SELECT * FROM user WHERE email='${req.body.email}'`)
+        const user = JSON.parse(JSON.stringify(userData[0][0]));
+        if (user.length === 0) {
             res.render('login', {
                 title: 'Login Page',
                 message: 'Invalid Email'
             })
         }
         else {
-            const validPassword = await bcrypt.compare(req.body.password, data[0][0].password);
+            const validPassword = await bcrypt.compare(req.body.password, user.password);
             if (validPassword) {
-                res.cookie('userToken', data[0][0].access_token, { maxAge: exp, httpOnly: true })
-                res.render('viewProfile', {
+                res.cookie('userToken', user.access_token, { maxAge: 86400000, httpOnly: true })
+                res.render('views', {
                     title: 'Welcome'
                 })
             }
@@ -229,14 +174,15 @@ router.get('/userProfile', async (req, res) => {
     try {
         const connection = await getConnection();
         const userToken = req.cookies['userToken'];
-        const data = await connection.execute(`SELECT * FROM user WHERE access_token='${userToken}'`)
-        console.log(data[0]);
-        if (data[0].length) {
+        const userId = jwt.verify(userToken,process.env.jwtToken);
+        const userData = await connection.execute(`SELECT * FROM user WHERE user_id='${userId}'`);
+        const user = JSON.parse(JSON.stringify(userData[0][0]));
+        if (user.access_token === userToken) {
             res.render('profile', {
                 title: 'User Profile',
-                message1: data[0][0].name,
-                message2: data[0][0].email,
-                message3: data[0][0].phone
+                message1: user.name,
+                message2: user.email,
+                message3: user.phone
             })
         }
         else {
@@ -259,10 +205,12 @@ router.post('/editProfile', async (req, res) => {
     try {
         const connection = await getConnection();
         const userToken = req.cookies['userToken'];
-        const data = await connection.execute(`SELECT * FROM user WHERE email='${userToken}'`);
-        if (data[0][0]) {
+        const userId = jwt.verify(userToken,process.env.jwtToken)
+        const userData = await connection.execute(`SELECT * FROM user WHERE user_id='${userId}'`);
+        const user = JSON.parse(JSON.stringify(userData[0][0]));
+        if (user.access_token === userToken)  {
             //sending user, name and phone number to userUpdate function
-            const result = await updateValidation(data[0][0], req.body.name, req.body.phone);
+            const result = await updateValidation(user, req.body.name, req.body.phone);
             if (result.status === true) {
                 res.render('home', {
                     message: result.message,
@@ -288,24 +236,31 @@ router.post('/editProfile', async (req, res) => {
     }
 })
 
-
-// router.post('/gamePage', async (req, res) => {
-//     try {
-
-
-
-
-
-
-
-//     }
-//     catch (e) {
-//         console.log('gamepage:', e.message);
-//         res.render('profile', {
-//             message: e.message
-//         })
-//     }
-// })
+router.get('/pageLeaderboard', async (req, res) => {
+    try {
+        const connection = await getConnection();
+        const userToken = req.cookies['userToken'];
+        const userId = jwt.verify(userToken,process.env.jwtToken)
+        const userData = await connection.execute(`SELECT * FROM user WHERE user_id='${userId}'`)
+        const user = JSON.parse(JSON.stringify(userData[0][0]));
+        if (user.access_token === userToken) {
+          const userLeaderboard = await connection.execute('SELECT name,points,win_games/total_game_played*100 as average FROM user');
+          const userBoard = JSON.parse(JSON.stringify(userLeaderboard[0]));
+          res.render('view',{
+            title:'LeaderBoard',
+            user:userBoard
+          }
+          )
+        }
+       
+    }
+    catch (e) {
+        console.log('leaderboard:', e.message);
+        res.render('view', {
+            message: e.message
+        })
+    }
+})
 
 module.exports = router;
 
