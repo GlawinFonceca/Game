@@ -2,32 +2,39 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Profile</title>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Profile</title>
 </head>
 <link rel="stylesheet" href="style.css">
+
 <body>
-        {{>leaderboardHeader}}
-        <br/>
-      <center><h2>{{title}}</h2></center>  
-        <h2>{{message}}</h2>
-      
-      <table id="customers">
-  <tr>
-    <th>UserName</th>
-    <th>Points</th>
-    <th>Average</th>
-  </tr>
+  {{>leaderboardHeader}}
+  <br />
+  <center>
+    <h2>{{title}}</h2>
+  </center>
+  <h2>{{message}}</h2>
+  <div class="buttons">
+  <button type="submit" size="25" class="points_button">Points</button>
+  <button type="submit" size="25" class="average_button">Average</button>
+  <button type="submit" size="25" class="desc_button">Desc</button>
+  <button type="submit" size="25" class="asc_button">Asc</button></div>
+  <table id="customers">
+    <tr>
+      <th>UserName</th>
+      <th>Points</th>
+      <th>Average</th>
+    </tr>
     {{#each user}}
-<tr>
-    <td>{{this.name}} </td>
-    <td>{{this.points}}</td>
-    <td>{{this.average}}</td>
-  </tr>
-{{/each}}
-  </table>  
+    <tr>
+      <td>{{this.name}} </td>
+      <td>{{this.points}}</td>
+      <td>{{this.average}}</td>
+    </tr>
+    {{/each}}
+  </table>
 </body>
+
 </html>
- 

@@ -31,7 +31,7 @@ button {
     border: none;
     cursor: pointer;
     opacity: 0.9;
-    font-weight: bold;
+    font-weight: bold; 
 }
 
 label {
@@ -98,3 +98,54 @@ td {
     background-color: #04AA6D;
     color: white;
   }
+
+  points_button {
+    background-color: #04AA6D;
+    width: 100px;
+    color: white;
+    padding: 14px 20px;
+    margin: 10px 0;
+    border: none;
+    cursor: pointer;
+    opacity: 0.9;
+    font-weight: bold;
+}
+average_button {
+    background-color:#04AA6D;
+    width: 100px;
+    color: white;
+    padding: 14px 20px;
+    margin: 10px 0;
+    border: none;
+    cursor: pointer;
+    opacity: 0.9;
+    font-weight: bold;
+}
+
+
+.asc_button {
+    tab-size: 2;
+    background-color:#04AA6D;
+    width: 100px;
+    color: white;
+    padding: 14px 20px;
+    margin: 10px 0;
+    border: none;
+    cursor: pointer;
+    opacity: 0.9;
+    font-weight: bold;
+    float: right;
+}
+.desc_button {
+    float: right;
+    background-color:#04AA6D;
+    width: 90px;
+    color: white;
+    padding: 14px 20px;
+    margin: 10px 0;
+    border: none;
+    cursor: pointer;
+    opacity: 0.9;
+    font-weight: bold;
+   
+}
