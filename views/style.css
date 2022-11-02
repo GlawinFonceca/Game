@@ -99,7 +99,7 @@ td {
     color: white;
   }
 
-  points_button {
+.points_button {
     background-color: #04AA6D;
     width: 100px;
     color: white;
@@ -110,7 +110,7 @@ td {
     opacity: 0.9;
     font-weight: bold;
 }
-average_button {
+.average_button {
     background-color:#04AA6D;
     width: 100px;
     color: white;
@@ -121,10 +121,7 @@ average_button {
     opacity: 0.9;
     font-weight: bold;
 }
-
-
 .asc_button {
-    tab-size: 2;
     background-color:#04AA6D;
     width: 100px;
     color: white;
@@ -139,7 +136,7 @@ average_button {
 .desc_button {
     float: right;
     background-color:#04AA6D;
-    width: 90px;
+    width: 100px;
     color: white;
     padding: 14px 20px;
     margin: 10px 0;

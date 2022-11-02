@@ -7,7 +7,8 @@ const cookieParser = require('cookie-parser')
 require('dotenv').config({path: './config/.env'})
 
 
-const router = require('./routes/user')
+const router = require('./routes/user');
+const pageRouter = require('./routes/pagerouter')
 
 
 
@@ -25,6 +26,7 @@ app.use(express.static(viewPath))
 
 //ROUTES REALTED CODE
 app.use(router);
+app.use(pageRouter);
 
 
 app.listen(process.env.PORT, () => {

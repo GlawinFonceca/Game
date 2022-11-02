@@ -15,23 +15,32 @@
   <center>
     <h2>{{title}}</h2>
   </center>
-  <h2>{{message}}</h2>
-  <div class="buttons">
-  <button type="submit" size="25" class="points_button">Points</button>
-  <button type="submit" size="25" class="average_button">Average</button>
-  <button type="submit" size="25" class="desc_button">Desc</button>
-  <button type="submit" size="25" class="asc_button">Asc</button></div>
+  <h2>{{message}}</h2><br/>
+  <form action={{api1}}  method="POST" >
+    <button type="submit" size="25" class="asc_button" style='margin-right:16px' >Asc</button>
+  </form>
+  <form action="/pageLeaderboard" method="GET">
+    <button type="submit" size="25" class="points_button" style='margin-left:16px'>Points</button>
+  </form>
+  <form action={{api2}} method="POST" >
+    <button type="submit" size="25" class="desc_button" style='margin-right:16px'>Desc</button>
+  </form>
+  <form action="/averageLeaderboard" method="POST">
+    <button type="submit" size="25" class="average_button" style='margin-left:16px'>Average</button>
+  </form>
+  <br/>
+  <br/>
   <table id="customers">
     <tr>
       <th>UserName</th>
-      <th>Points</th>
-      <th>Average</th>
+      <th>Rank</th>
+      <th>{{titlel}}</th>
     </tr>
     {{#each user}}
     <tr>
       <td>{{this.name}} </td>
-      <td>{{this.points}}</td>
-      <td>{{this.average}}</td>
+      <td>{{this.ranking}}</td>
+      <td>{{this.points}} {{per}} </td>
     </tr>
     {{/each}}
   </table>

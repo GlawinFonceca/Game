@@ -7,113 +7,28 @@ const updateValidation = require('../helper/userUpdate')
 const isValidSignup = require('../helper/userSignup');
 
 
-router.get('/home', async (req, res) => {
-    try {
-        const cookie = req.cookies['userToken'];
-        const connection = await getConnection();
-        const userData = await connection.execute(`SELECT * FROM user WHERE access_token='${cookie}'`);
-        const user = JSON.parse(JSON.stringify(userData[0][0]));
-        if (user.length !== 0) {
-            res.render('views', {
-                title: 'Welcome'
-            })
-        }
-        else {
-            res.render('home', {
-                title: 'Home Page',
-                message1: 'Please signup or Login'
-            })
-        }
-
-    }
-    catch (e) {
-        console.log("home:", e.message);
-        res.send({
-            message: 'failed',
-        })
-    }
-})
-
-router.get('/pageSignup', (req, res) => {
-    try {
-        res.render('signup', {
-            title: 'Signup Page'
-        })
-    }
-    catch (e) {
-        console.log("signup:", e.message);
-        res.send({
-            message: 'failed',
-        })
-    }
-})
-
-router.get('/pageLogin', (req, res) => {
-    try {
-        res.render('login', {
-            title: 'Login Page'
-        })
-    }
-    catch (e) {
-        console.log("login:", e.message);
-        res.send({
-            message: 'failed',
-        })
-    }
-})
-
-router.get('/pageGame', (req, res) => {
-    try {
-        res.render('game', {
-            title: 'Game'
-        })
-    }
-    catch (e) {
-        console.log("game:", e.message);
-        res.send({
-            message: 'failed',
-        })
-    }
-})
-
-router.get('/editProfile', (req, res) => {
-    try {
-        res.render('editProfile', {
-            title: 'Edit Page'
-        })
-    }
-    catch (e) {
-        console.log("editprofile:", e.message);
-        res.send({
-            message: 'failed',
-            data: e.message
-        })
-    }
-})
-
 router.post('/userSignup', async (req, res) => {
     try {
+       // const {name,email,password,phone} = {req.body.name,req.body.email,req.body.password,req.body.phone}
         const connection = await getConnection();
         const isValid = await isValidSignup(req.body.name, req.body.email, req.body.password, req.body.phone);
-        if (isValid.status === true) {
-            const userData = await connection.execute(`SELECT * FROM user WHERE email='${req.body.email}'`);
-            const user = JSON.parse(JSON.stringify(userData[0][0]));
-            if (user.length !== 0) {
+        if (isValid.status) {
+            const userData = await connection.execute(`SELECT * FROM user WHERE email='${req.body.email}'`)[0];
+            if (userData.length) {
                 res.render('signup', {
-                    message: 'email is already saved'
+                    message: 'Email is already saved. Please login'
                 })
             }
             else {
-                const saltRounds = 10;
+                
                 //encrypting password 
-                req.body.password = await bcrypt.hash(req.body.password, saltRounds);
+                req.body.password =  bcrypt.hashSync(req.body.password,process.env.saltRounds);
                 await connection.execute(`INSERT INTO user(name,email,password,phone)VALUES('${req.body.name}','${req.body.email}','${req.body.password}','${req.body.phone}')`);
-                const userId = await connection.execute(`SELECT user_id FROM user WHERE email='${req.body.email}'`);
-                const user = JSON.parse(JSON.stringify(userId[0][0]));
+                const user = (await connection.execute(`SELECT user_id FROM user WHERE email='${req.body.email}'`))[0][0];
                 const accessToken = jwt.sign(user.user_id, process.env.jwtToken);
                 const updateToken = await connection.execute(`UPDATE user SET access_token='${accessToken}' WHERE email='${req.body.email}'`)
-                res.cookie('userToken', accessToken, { maxAge: 86400000, httpOnly: true })
-                res.render('view', {
+                res.cookie('userToken', accessToken, { maxAge: process.env.cookieAge, httpOnly: true })
+                res.render('views', {
                     title: 'Welcome'
                 })
             }
@@ -136,18 +51,18 @@ router.post('/userSignup', async (req, res) => {
 router.post('/userLogin', async (req, res) => {
     try {
         const connection = await getConnection();
-        const userData = await connection.execute(`SELECT * FROM user WHERE email='${req.body.email}'`)
-        const user = JSON.parse(JSON.stringify(userData[0][0]));
-        if (user.length === 0) {
+        const userData = (await connection.execute(`SELECT * FROM user WHERE email='${req.body.email}'`))[0][0];
+        if (userData.length === 0) {
             res.render('login', {
                 title: 'Login Page',
                 message: 'Invalid Email'
             })
         }
         else {
-            const validPassword = await bcrypt.compare(req.body.password, user.password);
+            const validPassword = await bcrypt.compare(req.body.password, userData.password);
             if (validPassword) {
-                res.cookie('userToken', user.access_token, { maxAge: 86400000, httpOnly: true })
+                //
+                res.cookie('userToken', userData.access_token, { maxAge: process.env.cookieAge, httpOnly: true })
                 res.render('views', {
                     title: 'Welcome'
                 })
@@ -173,15 +88,14 @@ router.get('/userProfile', async (req, res) => {
     try {
         const connection = await getConnection();
         const userToken = req.cookies['userToken'];
-        const userId = jwt.verify(userToken,process.env.jwtToken);
-        const userData = await connection.execute(`SELECT * FROM user WHERE user_id='${userId}'`);
-        const user = JSON.parse(JSON.stringify(userData[0][0]));
-        if (user.access_token === userToken) {
+        const userId = jwt.verify(userToken, process.env.jwtToken);
+        const userData = (await connection.execute(`SELECT * FROM user WHERE user_id='${userId}'`))[0][0];
+        if (userData.access_token === userToken) {
             res.render('profile', {
                 title: 'User Profile',
-                message1: user.name,
-                message2: user.email,
-                message3: user.phone
+                message1: userData.name,
+                message2: userData.email,
+                message3: userData.phone
             })
         }
         else {
@@ -204,12 +118,11 @@ router.post('/editProfile', async (req, res) => {
     try {
         const connection = await getConnection();
         const userToken = req.cookies['userToken'];
-        const userId = jwt.verify(userToken,process.env.jwtToken)
-        const userData = await connection.execute(`SELECT * FROM user WHERE user_id='${userId}'`);
-        const user = JSON.parse(JSON.stringify(userData[0][0]));
-        if (user.access_token === userToken)  {
+        const userId = jwt.verify(userToken, process.env.jwtToken)
+        const userData = (await connection.execute(`SELECT * FROM user WHERE user_id='${userId}'`))[0][0];
+        if (userData.access_token === userToken) {
             //sending user, name and phone number to userUpdate function
-            const result = await updateValidation(user, req.body.name, req.body.phone);
+            const result = await updateValidation(userData, req.body.name, req.body.phone);
             if (result.status === true) {
                 res.render('home', {
                     message: result.message,
@@ -239,19 +152,19 @@ router.get('/pageLeaderboard', async (req, res) => {
     try {
         const connection = await getConnection();
         const userToken = req.cookies['userToken'];
-        const userId = jwt.verify(userToken,process.env.jwtToken)
-        const userData = await connection.execute(`SELECT * FROM user WHERE user_id='${userId}'`)
-        const user = JSON.parse(JSON.stringify(userData[0][0]));
-        if (user.access_token === userToken) {
-          const userLeaderboard = await connection.execute('SELECT name,points,win_games/total_game_played*100 as average FROM user');
-          const userBoard = JSON.parse(JSON.stringify(userLeaderboard[0]));
-          res.render('view',{
-            title:'LeaderBoard',
-            user:userBoard
-          }
-          )
+        const userId = jwt.verify(userToken, process.env.jwtToken)
+        const userData = (await connection.execute(`SELECT * FROM user WHERE user_id='${userId}'`))[0][0];
+        if (userData.access_token === userToken) {
+            const userLeaderboard = (await connection.execute('SELECT name,points,DENSE_RANK() OVER(ORDER BY points DESC) as ranking FROM user'))[0];
+            res.render('view', {
+                title: 'LeaderBoard',
+                titlel: 'Points',
+                user: userLeaderboard,
+                api1: '/pageAsc',
+                api2: '/pageDesc'
+            }
+            )
         }
-       
     }
     catch (e) {
         console.log('leaderboard:', e.message);
@@ -261,5 +174,153 @@ router.get('/pageLeaderboard', async (req, res) => {
     }
 })
 
+router.post('/pageAsc', async (req, res) => {
+    try {
+        const connection = await getConnection();
+        const userToken = req.cookies['userToken'];
+        const userId = jwt.verify(userToken, process.env.jwtToken)
+        const userData = (await connection.execute(`SELECT * FROM user WHERE user_id='${userId}'`))[0][0];
+        if (userData.access_token === userToken) {
+            const userLeaderboard = (await connection.execute('SELECT name,points,DENSE_RANK() OVER(ORDER BY points DESC) as ranking FROM user ORDER BY points ASC'))[0];
+            res.render('view', {
+                title: 'LeaderBoard',
+                titlel: 'Points',
+                user: userLeaderboard,
+                api1: '/pageAsc',
+                api2: '/pageDesc'
+            }
+            )
+        }
+    }
+    catch (e) {
+        console.log('leaderboard:', e.message);
+        res.render('view', {
+            message: e.message
+        })
+    }
+})
+
+router.post('/pageDesc', async (req, res) => {
+    try {
+        const connection = await getConnection();
+        const userToken = req.cookies['userToken'];
+        const userId = jwt.verify(userToken, process.env.jwtToken)
+        const userData = (await connection.execute(`SELECT * FROM user WHERE user_id='${userId}'`))[0][0];
+        if (userData.access_token === userToken) {
+            const userLeaderboard = (await connection.execute('SELECT name,points,DENSE_RANK() OVER(ORDER BY points DESC) as ranking FROM user ORDER BY points DESC'))[0];
+            res.render('view', {
+                title: 'LeaderBoard',
+                titlel: 'Points',
+                user: userLeaderboard,
+                api1: '/pageAsc',
+                api2: '/pageDesc'
+            }
+            )
+        }
+
+    }
+    catch (e) {
+        console.log('leaderboard:', e.message);
+        res.render('view', {
+            message: e.message
+        })
+    }
+})
+
+router.post('/averageLeaderboard', async (req, res) => {
+    try {
+        const connection = await getConnection();
+        const userToken = req.cookies['userToken'];
+        const userId = jwt.verify(userToken, process.env.jwtToken)
+        const userData = (await connection.execute(`SELECT * FROM user WHERE user_id='${userId}'`))[0][0];
+        if (userData.access_token === userToken) {
+            const userLeaderboard = (await connection.execute('SELECT name,CONCAT(ROUND(win_games/total_game_played*100),"%") as points, DENSE_RANK() OVER(ORDER BY win_games/total_game_played*100 DESC) as ranking  FROM user'))[0];
+            res.render('view', {
+                title: 'LeaderBoard',
+                titlel: 'Average',
+                user: userLeaderboard,
+                api1: '/pageAscAverage',
+                api2: '/pageDescAverage',
+            }
+            )
+        }
+    }
+    catch (e) {
+        console.log('leaderboard:', e.message);
+        res.render('view', {
+            message: e.message
+        })
+    }
+})
+
+router.post('/pageAscAverage', async (req, res) => {
+    try {
+        const connection = await getConnection();
+        const userToken = req.cookies['userToken'];
+        const userId = jwt.verify(userToken, process.env.jwtToken)
+        const userData = (await connection.execute(`SELECT * FROM user WHERE user_id='${userId}'`))[0][0];
+        if (userData.access_token === userToken) {
+            const userLeaderboard = (await connection.execute('SELECT name,CONCAT(ROUND(win_games/total_game_played*100),"%") as points, DENSE_RANK() OVER(ORDER BY win_games/total_game_played*100 DESC) as ranking  FROM user ORDER BY win_games/total_game_played*100 ASC'))[0];
+            res.render('view', {
+                title: 'LeaderBoard',
+                titlel: 'Average',
+                user: userLeaderboard,
+                percentage: '%',
+                api1: '/pageAscAverage',
+                api2: '/pageDescAverage'
+
+            }
+            )
+        }
+    }
+    catch (e) {
+        console.log('leaderboard:', e.message);
+        res.render('view', {
+            message: e.message
+        })
+    }
+})
+
+router.post('/pageDescAverage', async (req, res) => {
+    try {
+        const connection = await getConnection();
+        const userToken = req.cookies['userToken'];
+        const userId = jwt.verify(userToken, process.env.jwtToken)
+        const userData = (await connection.execute(`SELECT * FROM user WHERE user_id='${userId}'`))[0][0];
+        if (userData.access_token === userToken) {
+            const userLeaderboard = (await connection.execute('SELECT name,CONCAT(ROUND(win_games/total_game_played*100),"%") as points, DENSE_RANK() OVER(ORDER BY win_games/total_game_played*100 DESC) as ranking  FROM user ORDER BY win_games/total_game_played*100 DESC'))[0];
+            res.render('view', {
+                title: 'LeaderBoard',
+                titlel: 'Average',
+                user: userLeaderboard,
+                api1: '/pageAscAverage',
+                api2: '/pageDescAverage'
+            }
+            )
+        }
+    }
+    catch (e) {
+        console.log('leaderboard:', e.message);
+        res.render('view', {
+            message: e.message
+        })
+    }
+})
+
+
+
+
+
+router.post('/gamePage', async function (req, res) {
+    console.log(req.body.a0);
+    console.log(req.body.a1);
+    console.log(req.body.a2);
+    console.log(req.body.a3);
+    console.log(req.body.a4);
+    console.log(req.body.a5);
+    console.log(req.body.a6);
+    console.log(req.body.a7);
+    console.log(req.body.a8);
+})
 module.exports = router;
 

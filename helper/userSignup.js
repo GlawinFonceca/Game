@@ -2,30 +2,30 @@ const validate = require('validator');
 //user's crendial validation
 async function isValidSignup(name,email,password,phone) {
     try{
-    const userName = validate.isAlpha(name);
-    const userEmail = validate.isEmail(email);
-    const userPassword = validate.isStrongPassword(password,
+    const isValidUserName = validate.isAlpha(name);
+    const isValidUserEmail = validate.isEmail(email);
+    const isValidUserPassword = validate.isStrongPassword(password,
         { minLength: 6, minUppercase: 1, minSymbols: 1, returnScore: false, minNumbers: 1 });
-    const userPhone =validate.isLength(phone, { min: 10, max: 10 }) && validate.isNumeric(phone)
+    const isValidPhoneNumber =validate.isLength(phone, { min: 10, max: 10 }) && validate.isNumeric(phone)
     
-    if (userName === true && userEmail === true && userPassword === true && userPhone === true) {
+    if (isValidUserName === true && isValidUserEmail === true && isValidUserPassword === true && isValidPhoneNumber === true) {
         return { status: true }
     }
-    else if (userName !== true) {
+    else if (isValidUserName !== true) {
         return { status: false, message: "Please enter alphabets" }
     }
-    else if (userEmail !== true) {
+    else if (isValidUserEmail !== true) {
         return { status: false, message: "Please enter valid email" }
     }
-    else if (userPassword !== true) {
+    else if (isValidUserPassword !== true) {
         return { status: false, message: "Password should contain one symbol,one uppercase letter, one number and minimum 6 characters" }
     }
-    else if (userPhone !== true) {
+    else if (isValidPhoneNumber !== true) {
         return { status: false, message: "Please enter valid number" }
     }
 }
 catch (e) {
-    console.log("signupValidation:", e.message);
+    console.log("signupValidation=>", e);
 }
 
 }
