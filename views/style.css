@@ -31,7 +31,7 @@ button {
     border: none;
     cursor: pointer;
     opacity: 0.9;
-    font-weight: bold; 
+    font-weight: bold;
 }
 
 label {
@@ -51,6 +51,7 @@ label {
 .botbtn {
     float: left;
 }
+
 .container {
     padding: 16px;
     font-weight: bold;
@@ -58,46 +59,54 @@ label {
 
 input[type=text],
 input[type=password],
-input[type=email] {
+input[type=email],
+input[type=password],
+input[type=phone] {
     width: 100%;
     padding: 15px;
     margin: 5px 0 22px 0;
     display: inline-block;
     border: none;
     background: #f1f1f1;
-
 }
+
 td {
     width: 20%;
     padding: 10px;
     margin: 2px 0 20px 0;
     border: black;
-
 }
+
 #customers {
     font-family: Arial, Helvetica, sans-serif;
     border-collapse: collapse;
     width: 100%;
-  }
-  
-  #customers td, #customers th {
+}
+
+#customers td,
+#customers th {
     border: 1px solid #ddd;
     padding: 8px;
     font-family: 'Times New Roman';
     color: black;
-  }
-  
-  #customers tr:nth-child(even){background-color: #f2f2f2;}
-  
-  #customers tr:hover {background-color: #ddd;}
-  
-  #customers th {
+
+}
+
+#customers tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+#customers tr:hover {
+    background-color: #ddd;
+}
+
+#customers th {
     padding-top: 12px;
     padding-bottom: 12px;
     text-align: left;
     background-color: #04AA6D;
     color: white;
-  }
+}
 
 .points_button {
     background-color: #04AA6D;
@@ -110,8 +119,9 @@ td {
     opacity: 0.9;
     font-weight: bold;
 }
+
 .average_button {
-    background-color:#04AA6D;
+    background-color: #04AA6D;
     width: 100px;
     color: white;
     padding: 14px 20px;
@@ -121,8 +131,9 @@ td {
     opacity: 0.9;
     font-weight: bold;
 }
+
 .asc_button {
-    background-color:#04AA6D;
+    background-color: #04AA6D;
     width: 100px;
     color: white;
     padding: 14px 20px;
@@ -133,9 +144,10 @@ td {
     font-weight: bold;
     float: right;
 }
+
 .desc_button {
     float: right;
-    background-color:#04AA6D;
+    background-color: #04AA6D;
     width: 100px;
     color: white;
     padding: 14px 20px;
@@ -144,5 +156,14 @@ td {
     cursor: pointer;
     opacity: 0.9;
     font-weight: bold;
-   
+}
+
+.game {
+    padding: 10px;
+    border: black;
+    height: 100px;
+    float: right;
+    text-align: center;
+    font-weight: bold;
+    font-size: xx-large;
 }

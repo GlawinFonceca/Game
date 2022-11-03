@@ -7,37 +7,36 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Game</title>
     <link rel="stylesheet" href="style.css">
-</head>
 {{>gameHeader}}
-<body>
-    <form method="POST" action="/gamePage">
-    <h1>{{title}}</h1>
-    <br />
-    <br />
-    <table>
-        <tr>
-            <td><input type="text" size="25" maxlength="1" name="a0"></td>
-            <td><input type="text" size="25" maxlength="1" name="a1"></td>
-            <td><input type="text" size="25" maxlength="1" name="a2"></td>
-        </tr>
-        <tr>
-            <td><input type="text" size="25" maxlength="1" name="a3"> </td>
-            <td><input type="text" size="25" maxlength="1" name="a4"></td>
-            <td><input type="text" size="25" maxlength="1" name="a5"></td>
-        </tr>
-        <tr>
-            <td><input type="text" size="25" maxlength="1" name="a6"></td>
-            <td><input type="text" size="25" maxlength="1" name="a7"></td>
-            <td><input type="text" size="25" maxlength="1" name="a8"></td>
-        </tr>
-    </table>
-    <br />
-    <br />
-    <div class="container">
-        <div class="button"><button type="submit" size="25" class="botbtn">Bot</button></div>
-        <center> <label>Status :</label></center>
-    </div>
-</form>
-</body>
 
+<body style="display:flex;flex-direction:column">
+    <form method="POST" action="/gamePage" style="margin:0 auto">
+        <h1>{{title}}</h1>
+        <br />
+        <br />
+        <table class="gameTable">
+            <tr>
+                <td><input type="text" maxlength="1" name="a0" class="game" style="width: 100px;" value={{a0}}></td>
+                <td><input type="text" maxlength="1" name="a1" class="game" style="width: 100px;" value={{a1}}></td>
+                <td><input type="text" maxlength="1" name="a2" class="game" style="width: 100px;" value={{a2}}></td>
+            </tr>
+            <tr>
+                <td><input type="text" maxlength="1" name="a3" class="game" style="width: 100px;" value={{a3}}> </td>
+                <td><input type="text" maxlength="1" name="a4" class="game" style="width: 100px;" value={{a4}}></td>
+                <td><input type="text" maxlength="1" name="a5" class="game" style="width: 100px;" value={{a5}}></td>
+            </tr>
+            <tr>
+                <td><input type="text" maxlength="1" name="a6" class="game" style="width: 100px;" value={{a6}}></td>
+                <td><input type="text" maxlength="1" name="a7" class="game" style="width: 100px;" value={{a7}}></td>
+                <td><input type="text" maxlength="1" name="a8" class="game" style="width: 100px;" value={{a8}}></td>
+            </tr>
+        </table>
+        <br />
+        <br />
+            <div class="button"><button type="submit" size="25" class="botbtn" onclick="return getData()">Bot</button>
+            </div>
+            <center> <label>Status :{{Status}}</label></center>
+         
+    </form>
+</body>
 </html>

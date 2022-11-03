@@ -1,16 +1,33 @@
 const pageRouter = require('express').Router();
-const getConnection = require('../database/connection')
+const getConnection = require('../database/connection');
+const jwt = require('jsonwebtoken');
+
+const jwtdecode = require('../helper/jwtdecode');
 
 
 pageRouter.get('/home', async (req, res) => {
     try {
-        const cookie = req.cookies['userToken'];
+        const userToken = req.cookies['userToken'];
         const connection = await getConnection();
-        const userData = await connection.execute(`SELECT * FROM user WHERE access_token='${cookie}'`);
-        if (userData[0].length !== 0) {
-            res.render('views', {
-                title: 'Welcome'
+        const token = (await connection.execute(`SELECT * FROM user WHERE access_token='${userToken}'`))[0][0];
+        if (!token) {
+            res.render('home', {
+                title: 'Home page',
+                message1: 'Please signup or Login'
             })
+        }
+        else if (token.access_token === userToken) {
+            const userId = jwtdecode(userToken);
+            const userData = (await connection.execute(`SELECT * FROM user WHERE user_id='${userId}'`))[0][0];
+            if (userData.access_token === userToken) {
+                res.render('views', {
+                    title: 'Welcome'
+                })
+            }
+            else {
+
+            }
+
         }
         else {
             res.render('home', {
@@ -18,21 +35,40 @@ pageRouter.get('/home', async (req, res) => {
                 message1: 'Please signup or Login'
             })
         }
-
     }
     catch (e) {
-        console.log("home:", e.message);
+        console.log("home:", e);
         res.send({
             message: 'failed',
         })
     }
 })
 
-pageRouter.get('/pageSignup', (req, res) => {
-    try {console.log(process.env.saltRounds);
-        res.render('signup', {
-            title: 'Signup Page'
-        })
+pageRouter.get('/pageSignup', async (req, res) => {
+    try {
+        const connection = await getConnection();
+        const userToken = req.cookies['userToken'];
+        const token = (await connection.execute(`SELECT * FROM user WHERE access_token='${userToken}'`))[0][0];
+        if (!token) {
+            res.render('signup', {
+                title: 'Signup page',
+            })
+        }
+        else if (token.access_token === userToken) {
+            const userId = jwtdecode(userToken);
+            const userData = (await connection.execute(`SELECT * FROM user WHERE user_id='${userId}'`))[0][0];
+            if (userData.access_token === userToken) {
+                res.render('views', {
+                    title: 'Welcome'
+                })
+            }
+        }
+        else {
+            res.render('login', {
+                title: 'Login Page'
+            })
+        }
+
     }
     catch (e) {
         console.log("signup:", e.message);
@@ -42,11 +78,35 @@ pageRouter.get('/pageSignup', (req, res) => {
     }
 })
 
-pageRouter.get('/pageLogin', (req, res) => {
+pageRouter.get('/pageLogin', async (req, res) => {
     try {
-        res.render('login', {
-            title: 'Login Page'
-        })
+        const connection = await getConnection();
+        const userToken = req.cookies['userToken'];
+        const token = (await connection.execute(`SELECT * FROM user WHERE access_token='${userToken}'`))[0][0];
+        if (!token) {
+            res.render('login', {
+                title: 'Login Page'
+            })
+        }
+        else if (token.access_token === userToken) {
+            const userId = jwtdecode(userToken);
+            const userData = (await connection.execute(`SELECT * FROM user WHERE user_id='${userId}'`))[0][0];
+            if (userData.access_token === userToken) {
+                res.render('views', {
+                    title: 'Welcome'
+                })
+            }
+            else {
+                res.render('home', {
+                    title: 'Home page'
+                })
+            }
+        }
+        else {
+            res.render('login', {
+                title: 'Login Page'
+            })
+        }
     }
     catch (e) {
         console.log("login:", e.message);
@@ -56,11 +116,30 @@ pageRouter.get('/pageLogin', (req, res) => {
     }
 })
 
-pageRouter.get('/pageGame', (req, res) => {
+pageRouter.get('/pageGame', async (req, res) => {
     try {
-        res.render('game', {
-            title: 'Game'
-        })
+        const connection = await getConnection();
+        const userToken = req.cookies['userToken'];
+        const token = (await connection.execute(`SELECT * FROM user WHERE access_token='${userToken}'`))[0][0];
+        if (!token) {
+            res.render('login', {
+                title: 'Login Page'
+            })
+        }
+        else if (token.access_token === userToken) {
+            const userId = jwtdecode(userToken);
+            const userData = (await connection.execute(`SELECT * FROM user WHERE user_id='${userId}'`))[0][0];
+            if (userData.access_token === userToken) {
+                res.render('game', {
+                    title: 'Game'
+                })
+            }
+        }
+        else {
+            res.render('login', {
+                title: 'Login Page'
+            })
+        }
     }
     catch (e) {
         console.log("game:", e.message);
@@ -70,11 +149,35 @@ pageRouter.get('/pageGame', (req, res) => {
     }
 })
 
-pageRouter.get('/editProfile', (req, res) => {
+pageRouter.get('/editProfile', async (req, res) => {
     try {
-        res.render('editProfile', {
-            title: 'Edit Page'
-        })
+        const connection = await getConnection();
+        const userToken = req.cookies['userToken'];
+        const token = (await connection.execute(`SELECT * FROM user WHERE access_token='${userToken}'`))[0][0];
+        if (!token) {
+            res.render('login', {
+                title: 'Login Page'
+            })
+        }
+        else if (token.access_token === userToken) {
+            const userId = jwtdecode(userToken);
+            const userData = (await connection.execute(`SELECT * FROM user WHERE user_id='${userId}'`))[0][0];
+            if (userData.access_token === userToken) {
+                res.render('editProfile', {
+                    title: 'Edit Page'
+                })
+            }
+            else {
+                res.render('home', {
+                    title: 'Home page'
+                })
+            }
+        }
+        else {
+            res.render('login', {
+                title: 'Login Page'
+            })
+        }
     }
     catch (e) {
         console.log("editprofile:", e.message);
@@ -85,10 +188,4 @@ pageRouter.get('/editProfile', (req, res) => {
     }
 })
 
-
-
-
-
-
-
-module.exports=pageRouter;
+module.exports = pageRouter;
