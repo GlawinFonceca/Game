@@ -131,7 +131,8 @@ pageRouter.get('/pageGame', async (req, res) => {
             const userData = (await connection.execute(`SELECT * FROM user WHERE user_id='${userId}'`))[0][0];
             if (userData.access_token === userToken) {
                 res.render('game', {
-                    title: 'Game'
+                    title: 'Game',
+                    Status:'USER'
                 })
             }
         }
