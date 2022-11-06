@@ -19,7 +19,7 @@ function botDecision() {
 
 function winnerSelection(matrix, botSelected) {
     if (matrix[0] === 'x' && matrix[1] === 'o' && matrix[2] === 'x') {
-        if (botSelected == 1) {
+        if (botSelected !== '') {
             return 'bot'
         }
         else {
@@ -37,7 +37,7 @@ function winnerSelection(matrix, botSelected) {
     }
 
     if (matrix[6] === 'x' && matrix[7] === 'o' && matrix[8] === 'x') {
-        if (botSelected == 1) {
+        if (botSelected !== '') {
             return 'bot'
         }
         else {
@@ -47,7 +47,7 @@ function winnerSelection(matrix, botSelected) {
 
 
     if (matrix[0] === 'x' && matrix[3] === 'o' && matrix[6] === 'x') {
-        if (botSelected == 1) {
+        if (botSelected !== '') {
             return 'bot'
         }
         else {
@@ -56,7 +56,7 @@ function winnerSelection(matrix, botSelected) {
     }
 
     if (matrix[1] === 'x' && matrix[4] === 'o' && matrix[7] === 'x') {
-        if (botSelected == 1) {
+        if (botSelected !== '') {
             return 'bot'
         }
         else {
@@ -65,7 +65,7 @@ function winnerSelection(matrix, botSelected) {
     }
 
     if (matrix[2] === 'x' && matrix[5] === 'o' && matrix[8] === 'x') {
-        if (botSelected == 1) {
+        if (botSelected !== '') {
             return 'bot'
         }
         else {
@@ -74,7 +74,7 @@ function winnerSelection(matrix, botSelected) {
     }
 
     if (matrix[0] === 'x' && matrix[4] === 'o' && matrix[8] === 'x') {
-        if (botSelected == 1) {
+        if (botSelected !== '') {
             return 'bot'
         }
         else {
@@ -83,7 +83,7 @@ function winnerSelection(matrix, botSelected) {
     }
 
     if (matrix[2] === 'x' && matrix[4] === 'o' && matrix[6] === 'x') {
-        if (botSelected == 1) {
+        if (botSelected !== '') {
             return 'bot'
         }
         else {
@@ -95,16 +95,15 @@ function winnerSelection(matrix, botSelected) {
 gameRouter.post('/gamePage', async (req, res) => {
     const matrix = [req.body.a0, req.body.a1, req.body.a2, req.body.a3, req.body.a4, req.body.a5, req.body.a6,
     req.body.a7, req.body.a8];
-    let botSelected
 
-    let result = winnerSelection(matrix, botSelected);
+    let result = winnerSelection(matrix, botSelectedData);
     if (result === true) {
         const connection = await getConnection();
         const userToken = req.cookies['userToken'];
         const userId = jwtdecode(userToken);
         const userData = (await connection.execute(`SELECT * FROM user WHERE user_id='${userId}'`))[0][0];
         if (userData.access_token === userToken) {
-            await connection.execute(`UPDATE user SET points=points+100 WHERE email = '${userData.email}'`);
+            await connection.execute(`UPDATE user SET points=points+100,win_games=win_games+1,total_game_played=total_game_played+1 WHERE email = '${userData.email}'`);
         }
         res.render('views', {
             title: 'Welcome',
@@ -128,7 +127,7 @@ gameRouter.post('/gamePage', async (req, res) => {
 
         if (botSelectedIndex)
             matrix.splice(botSelectedIndex, 1, botSelectedData);
-        botSelected = 1
+
         res.render('game', {
             title: 'Game',
             Status: 'USER',

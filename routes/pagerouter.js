@@ -189,4 +189,13 @@ pageRouter.get('/editProfile', async (req, res) => {
     }
 })
 
+pageRouter.get('/pageLogout',async (req,res) =>{
+    res.clearCookie('userToken');
+    res.render('home',{
+        title: 'Home page',
+        message1: 'Please signup or Login'
+    })
+    
+})
+
 module.exports = pageRouter;
