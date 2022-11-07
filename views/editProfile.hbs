@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -7,22 +8,24 @@
     <title>Edit Profile</title>
 </head>
 <link rel="stylesheet" href="style.css">
+
 <body>
-<form method="POST" action="/editProfile">
-{{>afterHeader}}
-<br/>
-<h1>{{title}}</h1>
-<br/>
-<br/>
-<div class="container">
-Update Name : <input type="text" name="name"><br/><br/>
-Update Phone Number :<input type="text" name="phone"  maxlength="10" size="25"><br/>
-<div class="button"><button type="submit" size="25" class="signupbtn">Submit</button></div>
-</div>
-<br/>
-<br/>
-<br/>
-<h2>{{message}}</h2>
-</form>
+    <form method="POST" action="/editProfile">
+        {{>afterHeader}}
+        <br />
+        <h1>{{title}}</h1>
+        <br />
+        <br />
+        <div class="container">
+            Update Name : <input type="text" name="name"><br /><br />
+            Update Phone Number :<input type="text" name="phone" maxlength="10" size="25"><br />
+            <div class="button"><button type="submit" size="25" class="signupbtn">Submit</button></div>
+        </div>
+        <br />
+        <br />
+        <br />
+        <h2>{{message}}</h2>
+    </form>
 </body>
+
 </html>

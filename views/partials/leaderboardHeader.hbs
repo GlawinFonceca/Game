@@ -10,15 +10,16 @@
                 <a class="nav-link" href="/userProfile"> Profile</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="/pageGame"> Play Game </a>
+                <a class="nav-link" href="/pageGame"
+                    onclick="if (confirm('50 points will be deducted from your account. Are you sure to continue')){return true;}else{event.stopPropagation(); event.preventDefault();};">
+                    Play Game </a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="/pageLeaderboard"> LeaderBoard </a>
             </li>
-              <li class="nav-item">
+            <li class="nav-item">
                 <a class="nav-link" href="/pageLogout"> Logout </a>
             </li>
         </ul>
     </div>
-
 </nav>

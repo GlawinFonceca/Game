@@ -1,6 +1,5 @@
 const router = require('express').Router();
 const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken')
 
 const getConnection = require('../database/connection');
 const updateValidation = require('../helper/userUpdate');
@@ -16,7 +15,7 @@ router.post('/userSignup', async (req, res) => {
         const isValid = await isValidSignup(name, email, password, phone);
         if (isValid.status === true) {
             const userData = (await connection.execute(`SELECT * FROM user WHERE email='${email}'`))[0];
-            if (userData) {
+            if (userData.length !==0) {
                 res.render('signup', {
                     message: 'Email is already saved. Please login'
                 })
@@ -28,7 +27,7 @@ router.post('/userSignup', async (req, res) => {
                 await connection.execute(`INSERT INTO user(name,email,password,phone)VALUES('${name}','${email}','${password}','${phone}')`);
                 const user = (await connection.execute(`SELECT user_id FROM user WHERE email='${email}'`))[0][0];
                 const accessToken = jwtEncryption(user.user_id);
-                const updateToken = await connection.execute(`UPDATE user SET access_token='${accessToken}' WHERE email='${email}'`)
+                await connection.execute(`UPDATE user SET access_token='${accessToken}' WHERE email='${email}'`)
                 res.cookie('userToken', accessToken, { maxAge: process.env.cookieAge, httpOnly: true })
                 res.render('views', {
                     title: 'Welcome'
@@ -65,7 +64,7 @@ router.post('/userLogin', async (req, res) => {
             const validPassword = await bcrypt.compare(password, userData.password);
             if (validPassword) {
                 const accessToken = jwtEncryption(userData.user_id);
-                const updateToken = await connection.execute(`UPDATE user SET access_token='${accessToken}' WHERE email='${email}'`)
+                await connection.execute(`UPDATE user SET access_token='${accessToken}' WHERE email='${email}'`)
                 res.cookie('userToken', accessToken, { maxAge: process.env.cookieAge, httpOnly: true })
                 res.render('views', {
                     title: 'Welcome'
@@ -144,7 +143,7 @@ router.post('/editProfile', async (req, res) => {
             //sending user, name and phone number to userUpdate function
             const result = await updateValidation(userData, name, phone);
             if (result.status === true) {
-                res.render('home', {
+                res.render('views', {
                     message: result.message,
                 })
             }

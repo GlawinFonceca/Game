@@ -1,9 +1,7 @@
 const pageRouter = require('express').Router();
 const getConnection = require('../database/connection');
-const jwt = require('jsonwebtoken');
 
 const jwtdecode = require('../helper/jwtdecode');
-
 
 pageRouter.get('/home', async (req, res) => {
     try {
@@ -130,10 +128,20 @@ pageRouter.get('/pageGame', async (req, res) => {
             const userId = jwtdecode(userToken);
             const userData = (await connection.execute(`SELECT * FROM user WHERE user_id='${userId}'`))[0][0];
             if (userData.access_token === userToken) {
-                res.render('game', {
-                    title: 'Game',
-                    Status:'USER'
-                })
+                if (userData.points >= 50) {
+                    await connection.execute(`UPDATE user SET points=points-50,total_game_played=total_game_played+1 WHERE email = '${userData.email}'`);
+                    res.render('game', {
+                        title: 'Game',
+                        Status: 'USER'
+                    })
+                }
+                else {
+                    return res.render('views', {
+                        title: 'Welcome',
+                        message: 'Insufficient Points '
+                    })
+                }
+
             }
         }
         else {
@@ -189,13 +197,18 @@ pageRouter.get('/editProfile', async (req, res) => {
     }
 })
 
-pageRouter.get('/pageLogout',async (req,res) =>{
-    res.clearCookie('userToken');
-    res.render('home',{
-        title: 'Home page',
-        message1: 'Please signup or Login'
-    })
-    
+pageRouter.get('/pageLogout', async (req, res) => {
+    try {
+        res.clearCookie('userToken');
+        res.render('home', {
+            title: 'Home page',
+            message1: 'Please signup or Login'
+        })
+    }
+    catch (e) {
+        console.log('Page Logout =>', e)
+    }
+
 })
 
 module.exports = pageRouter;

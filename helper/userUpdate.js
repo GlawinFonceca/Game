@@ -11,7 +11,7 @@ async function isValidUpdate(user, name, phone) {
             }
             else if (!phone) {
                 const isValiduserName = validate.isAlpha(name);
-                if (isValiduserName=== true) {
+                if (isValiduserName === true) {
                     await connection.execute(`UPDATE user SET name='${name}' WHERE email = '${user.email}'`)
                     return { status: true, message: 'Successfully updated' }
                 }
@@ -21,7 +21,7 @@ async function isValidUpdate(user, name, phone) {
             }
             else if (!name) {
                 const isValidPhoneNumber = validate.isLength(phone, { min: 10, max: 10 }) && validate.isNumeric(phone)
-                if (isValidPhoneNumber=== true) {
+                if (isValidPhoneNumber === true) {
                     await connection.execute(`UPDATE user SET phone='${phone}' WHERE email = '${user.email}'`)
                     return { status: true, message: 'Successfully updated' }
                 }
@@ -32,14 +32,14 @@ async function isValidUpdate(user, name, phone) {
             else {
                 const isValiduserName = validate.isAlpha(name);
                 const isValidPhoneNumber = validate.isLength(phone, { min: 10, max: 10 }) && validate.isNumeric(phone)
-                if (isValiduserName  === true && isValidPhoneNumber === true) {
+                if (isValiduserName === true && isValidPhoneNumber === true) {
                     await connection.execute(`UPDATE user SET name = '${name}',phone='${phone}' WHERE email = '${user.email}'`)
                     return { status: true, message: 'Successfully updated' }
                 }
-                else if(isValiduserName !==true){
+                else if (isValiduserName !== true) {
                     return { status: false, message: 'Please enter alphabets only' }
                 }
-                else if(isValidPhoneNumber !==true){
+                else if (isValidPhoneNumber !== true) {
                     return { status: false, message: 'Please valid phone number' }
                 }
                 else {

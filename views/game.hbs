@@ -2,41 +2,55 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Game</title>
-    <link rel="stylesheet" href="style.css">
-{{>gameHeader}}
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Game</title>
+        <link rel="stylesheet" href="style.css">
+        {{>gameHeader}}
 
 <body style="display:flex;flex-direction:column">
-    <form method="POST" action="/gamePage" style="margin:0 auto">
-        <h1>{{title}}</h1>
+        <form method="POST" action="/gamePage" style="margin:0 auto">
+                <h1>{{title}}</h1>
+                <br />
+                <br />
+                <table class="gameTable">
+                        <tr>
+                                <td><input type="text" maxlength="1" name="a0" class="game" style="width: 100px;"
+                                                pattern="[x,o]" value={{arr0}}></td>
+                                <td><input type="text" maxlength="1" name="a1" class="game" style="width: 100px;"
+                                                pattern="[x,o]" value={{arr1}}></td>
+                                <td><input type="text" maxlength="1" name="a2" class="game" style="width: 100px;"
+                                                pattern="[x,o]" value={{arr2}}></td>
+                        </tr>
+                        <tr>
+                                <td><input type="text" maxlength="1" name="a3" class="game" style="width: 100px;"
+                                                pattern="[x,o]" value={{arr3}}> </td>
+                                <td><input type="text" maxlength="1" name="a4" class="game" style="width: 100px;"
+                                                pattern="[x,o]" value={{arr4}}></td>
+                                <td><input type="text" maxlength="1" name="a5" class="game" style="width: 100px;"
+                                                pattern="[x,o]" value={{arr5}}></td>
+                        </tr>
+                        <tr>
+                                <td><input type="text" maxlength="1" name="a6" class="game" style="width: 100px;"
+                                                pattern="[x,o]" value={{arr6}}></td>
+                                <td><input type="text" maxlength="1" name="a7" class="game" style="width: 100px;"
+                                                pattern="[x,o]" value={{arr7}}></td>
+                                <td><input type="text" maxlength="1" name="a8" class="game" style="width: 100px;"
+                                                pattern="[x,o]" value={{arr8}}></td>
+                        </tr>
+                </table>
+                <br />
+                <br />
+                <div class="button"><button type="submit" size="25" class="botbtn">Bot</button>
+                </div>
+                <center> <label>Status :{{Status}}</label></center>
+        </form>
         <br />
         <br />
-        <table class="gameTable">
-            <tr>
-                <td><input type="text" maxlength="1" name="a0" class="game" style="width: 100px;" value={{arr0}}></td>
-                <td><input type="text" maxlength="1" name="a1" class="game" style="width: 100px;" value={{arr1}}></td>
-                <td><input type="text" maxlength="1" name="a2" class="game" style="width: 100px;" value={{arr2}}></td>
-            </tr>
-            <tr>
-                <td><input type="text" maxlength="1" name="a3" class="game" style="width: 100px;" value={{arr3}}> </td>
-                <td><input type="text" maxlength="1" name="a4" class="game" style="width: 100px;" value={{arr4}}></td>
-                <td><input type="text" maxlength="1" name="a5" class="game" style="width: 100px;" value={{arr5}}></td>
-            </tr>
-            <tr>
-                <td><input type="text" maxlength="1" name="a6" class="game" style="width: 100px;" value={{arr6}}></td>
-                <td><input type="text" maxlength="1" name="a7" class="game" style="width: 100px;" value={{arr7}}></td>
-                <td><input type="text" maxlength="1" name="a8" class="game" style="width: 100px;" value={{arr8}}></td>
-            </tr>
-        </table>
-        <br />
-        <br />
-            <div class="button"><button type="submit" size="25" class="botbtn" onclick="return getData()">Bot</button>
-            </div>
-            <center> <label>Status :{{Status}}</label></center>
-         
-    </form>
+        <h1>{{message}}</h1>
 </body>
+
+
+
 </html>

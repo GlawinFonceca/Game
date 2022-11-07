@@ -4,7 +4,7 @@ const hbs = require('hbs');
 const bodyParser = require('body-parser');
 const app = express();
 const cookieParser = require('cookie-parser');
-require('dotenv').config({path: './config/.env'});
+require('dotenv').config({ path: './config/.env' });
 
 const router = require('./routes/user');
 const pageRouter = require('./routes/pagerouter');
@@ -29,7 +29,7 @@ app.use(gameRouter);
 
 
 app.listen(process.env.PORT, () => {
-    console.log('server is up on port ',process.env.PORT);
+    console.log('server is up on port ', process.env.PORT);
 });
 
 
