@@ -1,6 +1,6 @@
 const gameRouter = require('express').Router();
 const getConnection = require('../database/connection');
-const jwtdecode = require('../helper/jwtdecode');
+const jwtDecode = require('../helper/jwtDecode');
 const GLB = require('../constant/constant');
 
 function generateRandomIndex(num) {
@@ -67,13 +67,12 @@ gameRouter.post('/gamePage', async (req, res) => {
         if (result === true) {
             const connection = await getConnection();
             const userToken = req.cookies['userToken'];
-            const userId = jwtdecode(userToken);
+            const userId = jwtDecode(userToken);
             const userData = (await connection.execute(`SELECT * FROM user WHERE user_id='${userId}'`))[0][0];
             if (userData.access_token === userToken) {
-                await connection.execute(`UPDATE user SET points=points+${GLB.WINNING_POINTS},win_games=win_games+1,total_game_played=total_game_played+1 WHERE email = '${userData.email}'`);
+                await connection.execute(`UPDATE user SET points=points+${GLB.WINNING_POINTS},win_games=win_games+1 WHERE email = '${userData.email}'`);
                 return res.render('views', {
-                    title: 'Welcome',
-                    message: 'Winner '
+                    message: 'Congratulational You Won 100 Points'
                 })
             }
         }
@@ -82,7 +81,7 @@ gameRouter.post('/gamePage', async (req, res) => {
             if (userTurn % 2 == 0) {
                 //taking index of empty elements in matrix array
                 const indexOfMatrixElements = matrix.map((item, i) => item == '' ? i : 9).filter((x) => x != 9);
-                //return index indexOfMatrixEmptyElements
+                //return index indexOfMatrix'sEmptyElements
                 const indexForBotSelection = generateRandomIndex(indexOfMatrixElements.length)
                 const botSelectedData = getRandomBotDecision();
 
@@ -112,13 +111,11 @@ gameRouter.post('/gamePage', async (req, res) => {
             if (result === true) {
                 const connection = await getConnection();
                 const userToken = req.cookies['userToken'];
-                const userId = jwtdecode(userToken);
+                const userId = jwtDecode(userToken);
                 const userData = (await connection.execute(`SELECT * FROM user WHERE user_id='${userId}'`))[0][0];
                 if (userData.access_token === userToken) {
-                    await connection.execute(`UPDATE user SET points=points-${GLB.DEDUCTING_POINTS},total_game_played=total_game_played+1 WHERE email = '${userData.email}'`);
                     return res.render('views', {
-                        title: 'Welcome',
-                        message: 'Winner is Bot'
+                        message: 'Your are Lost'
                     })
                 }
             }
@@ -128,12 +125,11 @@ gameRouter.post('/gamePage', async (req, res) => {
         if (draw == true) {
             const connection = await getConnection();
             const userToken = req.cookies['userToken'];
-            const userId = jwtdecode(userToken);
+            const userId = jwtDecode(userToken);
             const userData = (await connection.execute(`SELECT * FROM user WHERE user_id='${userId}'`))[0][0];
             if (userData.access_token === userToken) {
-                await connection.execute(`UPDATE user SET points=points+${GLB.DRAW_POINTS},total_game_played=total_game_played+1 WHERE email = '${userData.email}'`);
+                await connection.execute(`UPDATE user SET points=points+${GLB.DRAW_POINTS} WHERE email = '${userData.email}'`);
                 return res.render('views', {
-                    title: 'Welcome',
                     message: 'Match Draw'
                 })
             }

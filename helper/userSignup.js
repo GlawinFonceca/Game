@@ -1,8 +1,23 @@
 const validate = require('validator');
 //user's credential validation
+
+
+function lettersAndSpaceCheck(name)
+{
+var regEx = /^[a-z][a-z\s]*$/;
+if(name.match(regEx))
+{
+return true;
+}
+else
+{
+return false;
+}
+}
+
 async function isValidSignup(name, email, password, phone) {
     try {
-        const isValidUserName = validate.isAlpha(name);
+        const isValidUserName = lettersAndSpaceCheck(name);
         const isValidUserEmail = validate.isEmail(email);
         const isValidUserPassword = validate.isStrongPassword(password,
             { minLength: 6, minUppercase: 1, minSymbols: 1, returnScore: false, minNumbers: 1 });

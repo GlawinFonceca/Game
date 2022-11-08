@@ -8,8 +8,20 @@
         <title>Game</title>
         <link rel="stylesheet" href="style.css">
         {{>gameHeader}}
+        <script>
+                function onloadPage() {
+                 const page =confirm('50 points will be deducted from your account. Are you sure to continue')
+                  if(page ==true) {
+                       window.location.href='/pageGame'
+                  }
+                  else {
+                        window.location.href='/home'
+                  }
+                }
+        
+        </script>
 
-<body style="display:flex;flex-direction:column">
+<body style="display:flex;flex-direction:column" onload="onloadPage()">
         <form method="POST" action="/gamePage" style="margin:0 auto">
                 <h1>{{title}}</h1>
                 <br />

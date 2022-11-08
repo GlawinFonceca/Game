@@ -1,6 +1,20 @@
 const getConnection = require('../database/connection')
 const validate = require('validator');
 
+
+function lettersAndSpaceCheck(name)
+{
+var regEx = /^[a-z][a-z\s]*$/;
+if(name.match(regEx))
+{
+return true;
+}
+else
+{
+return false;
+}
+}
+
 async function isValidUpdate(user, name, phone) {
     try {
         const connection = await getConnection();
@@ -10,7 +24,7 @@ async function isValidUpdate(user, name, phone) {
                 return { status: false, message: 'Please enter name or phone number' }
             }
             else if (!phone) {
-                const isValiduserName = validate.isAlpha(name);
+                const isValiduserName = lettersAndSpaceCheck(name)
                 if (isValiduserName === true) {
                     await connection.execute(`UPDATE user SET name='${name}' WHERE email = '${user.email}'`)
                     return { status: true, message: 'Successfully updated' }
@@ -30,7 +44,7 @@ async function isValidUpdate(user, name, phone) {
                 }
             }
             else {
-                const isValiduserName = validate.isAlpha(name);
+                const isValiduserName = lettersAndSpaceCheck(name);
                 const isValidPhoneNumber = validate.isLength(phone, { min: 10, max: 10 }) && validate.isNumeric(phone)
                 if (isValiduserName === true && isValidPhoneNumber === true) {
                     await connection.execute(`UPDATE user SET name = '${name}',phone='${phone}' WHERE email = '${user.email}'`)
