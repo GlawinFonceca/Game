@@ -1,5 +1,5 @@
 const validate = require('validator');
-//user's crendial validation
+//user's credential validation
 async function isValidSignup(name, email, password, phone) {
     try {
         const isValidUserName = validate.isAlpha(name);

@@ -48,6 +48,10 @@ label {
     float: left;
 }
 
+.editbtn {
+    float: right;
+}
+
 .botbtn {
     float: left;
 }

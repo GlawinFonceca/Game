@@ -22,10 +22,6 @@ pageRouter.get('/home', async (req, res) => {
                     title: 'Welcome'
                 })
             }
-            else {
-
-            }
-
         }
         else {
             res.render('home', {
@@ -141,7 +137,6 @@ pageRouter.get('/pageGame', async (req, res) => {
                         message: 'Insufficient Points '
                     })
                 }
-
             }
         }
         else {
