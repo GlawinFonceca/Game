@@ -119,12 +119,10 @@ router.get('/userProfile', auth, async (req, res) => {
     }
 })
 
-router.post('/editProfile',auth, async (req, res) => {
+router.post('/editProfile', auth, async (req, res) => {
     try {
         const { name, phone } = req.body;
         const connection = await getConnection();
-        const userToken = req.cookies['userToken'];
-        const userId = jwtDecode(userToken);
         const userData = (await connection.execute(`SELECT * FROM user WHERE user_id='${req.userId}'`))[0][0];
         if (userData.access_token === req.userToken) {
             //sending user, name and phone number to userUpdate function
@@ -155,27 +153,27 @@ router.post('/editProfile',auth, async (req, res) => {
     }
 })
 
-router.get('/pageLeaderboard',auth, async (req, res) => {
+router.get('/pageLeaderboard', auth, async (req, res) => {
     try {
         const connection = await getConnection();
-                const userData = (await connection.execute(`SELECT * FROM user WHERE user_id='${req.userId}'`))[0][0];
-                if (userData.access_token === req.userToken) {
-                    const userLeaderboard = (await connection.execute('SELECT name,points,DENSE_RANK() OVER(ORDER BY points DESC) as ranking,ROW_NUMBER() OVER(ORDER BY points DESC) as rankings FROM user'))[0];
-                    res.render('view', {
-                        title: 'LeaderBoard',
-                        titlel: 'Points',
-                        user: userLeaderboard,
-                        api1: '/pageAsc',
-                        api2: '/pageDesc'
-                    })
-                }
-                else {
-                    res.render('login', {
-                        title: 'Login Page',
-                        message: 'Please Login',
-                    })
-                }
-            }
+        const userData = (await connection.execute(`SELECT * FROM user WHERE user_id='${req.userId}'`))[0][0];
+        if (userData.access_token === req.userToken) {
+            const userLeaderboard = (await connection.execute('SELECT name,points,DENSE_RANK() OVER(ORDER BY points DESC) as ranking,ROW_NUMBER() OVER(ORDER BY points DESC) as rankings FROM user'))[0];
+            res.render('view', {
+                title: 'LeaderBoard',
+                titlel: 'Points',
+                user: userLeaderboard,
+                api1: '/pageAsc',
+                api2: '/pageDesc'
+            })
+        }
+        else {
+            res.render('login', {
+                title: 'Login Page',
+                message: 'Please Login',
+            })
+        }
+    }
     catch (e) {
         console.log('leaderboard:', e.message);
         res.render('view', {
@@ -184,27 +182,27 @@ router.get('/pageLeaderboard',auth, async (req, res) => {
     }
 })
 
-router.post('/pageAsc',auth, async (req, res) => {
+router.post('/pageAsc', auth, async (req, res) => {
     try {
         const connection = await getConnection();
-                const userData = (await connection.execute(`SELECT * FROM user WHERE user_id='${req.userId}'`))[0][0];
-                if (userData.access_token === req.userToken) {
-                    const userLeaderboard = (await connection.execute('SELECT name,points,DENSE_RANK() OVER(ORDER BY points DESC) as ranking,ROW_NUMBER() OVER(ORDER BY points DESC) as rankings FROM user ORDER BY points ASC,user_id DESC'))[0];
-                    res.render('view', {
-                        title: 'LeaderBoard',
-                        titlel: 'Points',
-                        user: userLeaderboard,
-                        api1: '/pageAsc',
-                        api2: '/pageDesc'
-                    })
-                }
-                else {
-                    res.render('login', {
-                        title: 'Login Page',
-                        message: 'Please Login',
-                    })
-                }
-            }
+        const userData = (await connection.execute(`SELECT * FROM user WHERE user_id='${req.userId}'`))[0][0];
+        if (userData.access_token === req.userToken) {
+            const userLeaderboard = (await connection.execute('SELECT name,points,DENSE_RANK() OVER(ORDER BY points DESC) as ranking,ROW_NUMBER() OVER(ORDER BY points DESC) as rankings FROM user ORDER BY points ASC,user_id DESC'))[0];
+            res.render('view', {
+                title: 'LeaderBoard',
+                titlel: 'Points',
+                user: userLeaderboard,
+                api1: '/pageAsc',
+                api2: '/pageDesc'
+            })
+        }
+        else {
+            res.render('login', {
+                title: 'Login Page',
+                message: 'Please Login',
+            })
+        }
+    }
     catch (e) {
         console.log('leaderboard:', e.message);
         res.render('view', {
@@ -213,28 +211,28 @@ router.post('/pageAsc',auth, async (req, res) => {
     }
 })
 
-router.post('/pageDesc',auth, async (req, res) => {
+router.post('/pageDesc', auth, async (req, res) => {
     try {
         const connection = await getConnection();
-                const userData = (await connection.execute(`SELECT * FROM user WHERE user_id='${req.userId}'`))[0][0];
-                if (userData.access_token === req.userToken) {
-                    const userLeaderboard = (await connection.execute('SELECT name,points,DENSE_RANK() OVER(ORDER BY points DESC) as ranking,ROW_NUMBER() OVER(ORDER BY points DESC) as rankings FROM user ORDER BY points DESC,user_id ASC'))[0];
-                    res.render('view', {
-                        title: 'LeaderBoard',
-                        titlel: 'Points',
-                        user: userLeaderboard,
-                        api1: '/pageAsc',
-                        api2: '/pageDesc'
-                    }
-                    )
-                }
-                else {
-                    res.render('login', {
-                        title: 'Login Page',
-                        message: 'Please Login',
-                    })
-                }
+        const userData = (await connection.execute(`SELECT * FROM user WHERE user_id='${req.userId}'`))[0][0];
+        if (userData.access_token === req.userToken) {
+            const userLeaderboard = (await connection.execute('SELECT name,points,DENSE_RANK() OVER(ORDER BY points DESC) as ranking,ROW_NUMBER() OVER(ORDER BY points DESC) as rankings FROM user ORDER BY points DESC,user_id ASC'))[0];
+            res.render('view', {
+                title: 'LeaderBoard',
+                titlel: 'Points',
+                user: userLeaderboard,
+                api1: '/pageAsc',
+                api2: '/pageDesc'
             }
+            )
+        }
+        else {
+            res.render('login', {
+                title: 'Login Page',
+                message: 'Please Login',
+            })
+        }
+    }
     catch (e) {
         console.log('leaderboard:', e.message);
         res.render('view', {
@@ -243,28 +241,28 @@ router.post('/pageDesc',auth, async (req, res) => {
     }
 })
 
-router.post('/averageLeaderboard',auth, async (req, res) => {
+router.post('/averageLeaderboard', auth, async (req, res) => {
     try {
         const connection = await getConnection();
-                const userData = (await connection.execute(`SELECT * FROM user WHERE user_id='${req.userId}'`))[0][0];
-                if (userData.access_token === req.userToken) {
-                    const userLeaderboard = (await connection.execute('SELECT name,CONCAT(ROUND(win_games/total_game_played*100),"%") as points, DENSE_RANK() OVER(ORDER BY win_games/total_game_played*100 DESC) as ranking,ROW_NUMBER() OVER(ORDER BY  win_games/total_game_played*100 DESC) as rankings  FROM user'))[0];
-                    res.render('view', {
-                        title: 'LeaderBoard',
-                        titlel: 'Average Wins',
-                        user: userLeaderboard,
-                        api1: '/pageAscAverage',
-                        api2: '/pageDescAverage',
-                    }
-                    )
-                }
-                else {
-                    res.render('login', {
-                        title: 'Login Page',
-                        message: 'Please Login',
-                    })
-                }
+        const userData = (await connection.execute(`SELECT * FROM user WHERE user_id='${req.userId}'`))[0][0];
+        if (userData.access_token === req.userToken) {
+            const userLeaderboard = (await connection.execute('SELECT name,CONCAT(ROUND(win_games/total_game_played*100),"%") as points, DENSE_RANK() OVER(ORDER BY win_games/total_game_played*100 DESC) as ranking,ROW_NUMBER() OVER(ORDER BY  win_games/total_game_played*100 DESC) as rankings  FROM user'))[0];
+            res.render('view', {
+                title: 'LeaderBoard',
+                titlel: 'Average Wins',
+                user: userLeaderboard,
+                api1: '/pageAscAverage',
+                api2: '/pageDescAverage',
             }
+            )
+        }
+        else {
+            res.render('login', {
+                title: 'Login Page',
+                message: 'Please Login',
+            })
+        }
+    }
     catch (e) {
         console.log('leaderboard:', e.message);
         res.render('view', {
@@ -273,30 +271,30 @@ router.post('/averageLeaderboard',auth, async (req, res) => {
     }
 })
 
-router.post('/pageAscAverage',auth, async (req, res) => {
+router.post('/pageAscAverage', auth, async (req, res) => {
     try {
         const connection = await getConnection();
-                const userData = (await connection.execute(`SELECT * FROM user WHERE user_id='${req.userId}'`))[0][0];
-                if (userData.access_token === req.userToken) {
-                    const userLeaderboard = (await connection.execute('SELECT name,CONCAT(ROUND(win_games/total_game_played*100),"%") as points, DENSE_RANK() OVER(ORDER BY win_games/total_game_played*100 DESC) as ranking,ROW_NUMBER() OVER(ORDER BY  win_games/total_game_played*100 DESC) as rankings  FROM user ORDER BY win_games/total_game_played*100 ASC,user_id DESC'))[0];
-                    res.render('view', {
-                        title: 'LeaderBoard',
-                        titlel: 'Average Wins',
-                        user: userLeaderboard,
-                        percentage: '%',
-                        api1: '/pageAscAverage',
-                        api2: '/pageDescAverage'
+        const userData = (await connection.execute(`SELECT * FROM user WHERE user_id='${req.userId}'`))[0][0];
+        if (userData.access_token === req.userToken) {
+            const userLeaderboard = (await connection.execute('SELECT name,CONCAT(ROUND(win_games/total_game_played*100),"%") as points, DENSE_RANK() OVER(ORDER BY win_games/total_game_played*100 DESC) as ranking,ROW_NUMBER() OVER(ORDER BY  win_games/total_game_played*100 DESC) as rankings  FROM user ORDER BY win_games/total_game_played*100 ASC,user_id DESC'))[0];
+            res.render('view', {
+                title: 'LeaderBoard',
+                titlel: 'Average Wins',
+                user: userLeaderboard,
+                percentage: '%',
+                api1: '/pageAscAverage',
+                api2: '/pageDescAverage'
 
-                    }
-                    )
-                }
-                else {
-                    res.render('login', {
-                        title: 'Login Page',
-                        message: 'Please Login',
-                    })
-                }
             }
+            )
+        }
+        else {
+            res.render('login', {
+                title: 'Login Page',
+                message: 'Please Login',
+            })
+        }
+    }
     catch (e) {
         console.log('leaderboard:', e.message);
         res.render('view', {

@@ -25,10 +25,18 @@ pageRouter.get('/home', async (req, res) => {
             }
             else {
                 const userData = (await connection.execute(`SELECT * FROM user WHERE user_id='${userId}'`))[0][0];
-                if (userData.access_token === userToken) {
-                    res.render('views', {
-                        title: 'Welcome'
+                if (!userData) {
+                    res.render('home', {
+                        title: 'Home Page',
+                        message1: 'Please signup or Login'
                     })
+                }
+                else {
+                    if (userData.access_token === userToken) {
+                        res.render('views', {
+                            title: 'Welcome'
+                        })
+                    }
                 }
             }
         }
@@ -59,10 +67,17 @@ pageRouter.get('/pageSignup', async (req, res) => {
             }
             else {
                 const userData = (await connection.execute(`SELECT * FROM user WHERE user_id='${userId}'`))[0][0];
-                if (userData.access_token === userToken) {
-                    res.render('views', {
-                        title: 'Welcome'
+                if (!userData) {
+                    res.render('signup', {
+                        title: 'Signup page',
                     })
+                }
+                else {
+                    if (userData.access_token === userToken) {
+                        res.render('views', {
+                            title: 'Welcome'
+                        })
+                    }
                 }
             }
         }
@@ -79,15 +94,22 @@ pageRouter.get('/pageLogin', auth, async (req, res) => {
     try {
         const connection = await getConnection();
         const userData = (await connection.execute(`SELECT * FROM user WHERE user_id='${req.userId}'`))[0][0];
-        if (userData.access_token === req.userToken) {
-            res.render('views', {
-                title: 'Welcome'
+        if (!userData) {
+            res.render('login', {
+                title: 'Login Page'
             })
         }
         else {
-            res.render('home', {
-                title: 'Home page'
-            })
+            if (userData.access_token === req.userToken) {
+                res.render('views', {
+                    title: 'Welcome'
+                })
+            }
+            else {
+                res.render('home', {
+                    title: 'Home page'
+                })
+            }
         }
     }
     catch (e) {
@@ -100,23 +122,41 @@ pageRouter.get('/pageLogin', auth, async (req, res) => {
 
 pageRouter.get('/pageGame', auth, async (req, res) => {
     try {
-        const connection = await getConnection();
-        const userData = (await connection.execute(`SELECT * FROM user WHERE user_id='${req.userId}'`))[0][0];
-        if (userData.access_token === req.userToken) {
-            if (userData.points >= 50) {
-                await connection.execute(`UPDATE user SET points=points-50,total_game_played=total_game_played+1 WHERE email = '${userData.email}'`);
-                res.render('game', {
-                    title: 'Game',
-                    Status: 'USER',
-                    permission:1
-                })
+        console.log(req.query.permissionGranted);
+        if (!req.query.permissionGranted) {
+            return res.render('game', {
+                title: 'Game',
+                Status: 'USER',
+                permissionGranted: false,
+            })
+        }
+        else if (req.query.permissionGranted == 1) {
+            const connection = await getConnection();
+            const userData = (await connection.execute(`SELECT * FROM user WHERE user_id='${req.userId}'`))[0][0];
+            if (userData.access_token === req.userToken) {
+                if (userData.points >= 50) {
+                    await connection.execute(`UPDATE user SET points=points-50,total_game_played=total_game_played+1 WHERE email = '${userData.email}'`);
+                    res.render('game', {
+                        title: 'Game',
+                        Status: 'USER',
+                        permissionGranted: true,
+                    })
+                }
+                else {
+                    return res.render('views', {
+                        title: 'Welcome',
+                        message: 'Insufficient Points '
+                    })
+                }
             }
-            else {
-                return res.render('views', {
-                    title: 'Welcome',
-                    message: 'Insufficient Points '
-                })
-            }
+        }
+        else {
+            res.render('game', {
+                title: 'Game',
+                Status: 'USER',
+                permissionGranted: true
+            })
+
         }
     }
     catch (e) {
