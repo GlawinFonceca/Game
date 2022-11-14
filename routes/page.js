@@ -122,7 +122,6 @@ pageRouter.get('/pageLogin', auth, async (req, res) => {
 
 pageRouter.get('/pageGame', auth, async (req, res) => {
     try {
-        console.log(req.query.permissionGranted);
         if (!req.query.permissionGranted) {
             return res.render('game', {
                 title: 'Game',
