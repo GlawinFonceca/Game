@@ -8,13 +8,13 @@ const updateValidation = require('../helper/userUpdate');
 const isValidSignup = require('../helper/userSignup');
 const jwtEncryption = require('../helper/jwtEncrypt');
 const auth = require('../middleware/auth');
-const jwtDecode = require('../helper/jwtDecode');
 
 
 
 router.post('/userSignup', async (req, res) => {
     try {
         let { name, email, password, phone } = req.body;
+        name = name.toLowerCase();
         const connection = await getConnection();
         const isValid = await isValidSignup(name, email, password, phone);
         if (isValid.status === true) {
@@ -122,10 +122,11 @@ router.get('/userProfile', auth, async (req, res) => {
 router.post('/editProfile', auth, async (req, res) => {
     try {
         const { name, phone } = req.body;
+        name = name.toLowerCase();
         const connection = await getConnection();
         const userData = (await connection.execute(`SELECT * FROM user WHERE user_id='${req.userId}'`))[0][0];
         if (userData.access_token === req.userToken) {
-            //sending user, name and phone number to userUpdate function
+            //sending user, name and phone number to updateValidatioin function
             const result = await updateValidation(userData, name, phone);
             if (result.status === true) {
                 res.render('views', {
